@@ -15,4 +15,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "HyperKey"
 include(":library")
-include("demo")
