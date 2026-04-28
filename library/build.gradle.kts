@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "io.github.yours-valentiine"
-version = "0.1.0-beta03"
+version = "0.2.0-beta02"
 
 kotlin {
     jvm()
@@ -40,6 +40,7 @@ kotlin {
 
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation(libs.compose.test.ui)
         }
     }
 }
@@ -48,7 +49,7 @@ mavenPublishing {
     publishToMavenCentral()
     signAllPublications()
 
-    coordinates("io.github.yours-valentiine", "hyperkey", "0.1.0-beta03")
+    coordinates(project.group.toString(), "hyperkey", project.version.toString())
 
     pom {
         name = "HyperKey"

@@ -27,9 +27,48 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package io.github.yoursvalentiine.hyperkey.ui
+package io.github.yoursvalentiine.hyperkey.models
 
-import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import io.github.yoursvalentiine.hyperkey.scope.Pressed
 
-fun Modifier.onHotKey(modifier: Modifier): Modifier =
-    this.then(modifier)
+operator fun Key.plus(key: Key): RawChord =
+    RawChord(
+        keys = setOf(this, key),
+        modifiers = emptySet()
+    )
+
+operator fun Key.plus(mod: KeyModifier): RawChord =
+    RawChord(keys = setOf(this), modifiers = setOf(mod))
+
+infix fun Key.andThen(key: Key) = RawSequence(
+    previewChord = listOf(
+        this.asChord(eventType = Pressed)
+    ),
+    keys = setOf(key),
+    modifiers = emptySet()
+)
+
+infix fun Key.andThen(mod: KeyModifier) = RawSequence(
+    previewChord = listOf(
+        this.asChord(eventType = Pressed)
+    ),
+    keys = emptySet(),
+    modifiers = setOf(mod)
+)
+
+infix fun Key.andThen(chord: RawChord) =
+    RawSequence(
+        previewChord = listOf(
+            this.asChord(eventType = Pressed)
+        ),
+        keys = chord.keys,
+        modifiers = chord.modifiers
+    )
+
+internal fun Key.asChord(eventType: KeyEventType) = HotKeyTrigger.Chord(
+    keys = setOf(this),
+    modifiers = emptySet(),
+    eventType = eventType
+)

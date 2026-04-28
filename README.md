@@ -3,11 +3,11 @@
 A Kotlin DSL for declarative keyboard shortcut handling in Compose Multiplatform (Android, Desktop).
 
 ```kotlin
-ShortcutBox(
-    shortcuts = {
-        Key.S with ctrl press { save() }
-        Key.K with ctrl andThen Key.P press { openCommandPalette() }
-        Key.Space with hyper press { spotlight() }
+HotKeyBox(
+    hotkeys = {
+        Key.S + Ctrl press { save() }
+        Key.K + Ctrl andThen Key.P press { openCommandPalette() }
+        Key.Space + Hyper press { spotlight() }
     }
 ) {
     MyApp()
@@ -21,7 +21,7 @@ ShortcutBox(
 ```kotlin
 // build.gradle.kts
 dependencies {
-    implementation("io.github.yoursvalentiine:hyperkey:0.1.0-beta03")
+    implementation("io.github.yoursvalentiine:hyperkey:0.2.0-beta02")
 }
 ```
 
@@ -31,26 +31,26 @@ dependencies {
 
 The library has three layers:
 
-| Layer         | API                                       | Use case                        |
-|---------------|-------------------------------------------|---------------------------------|
-| Container     | `ShortcutBox`                             | Shortcuts for an entire area    |
-| Modifier      | `rememberShortcutModifier` + `onShortcut` | Shortcuts on a single component |
-| Trigger types | Chord, Sequence                           | Simultaneous vs sequential keys |
+| Layer         | API                                   | Use case                        |
+|---------------|---------------------------------------|---------------------------------|
+| Container     | `HotKeyBox`                           | Shortcuts for an entire area    |
+| Modifier      | `rememberHotKeyModifier` + `onHotKey` | Shortcuts on a single component |
+| Trigger types | `Chord`, `Sequence`                   | Simultaneous vs sequential keys |
 
 ---
 
-## ShortcutBox
+## HotKeyBoxHotKeyBox
 
 Wraps any content and intercepts keyboard events within it. Takes a `ShortcutScope` lambda where all shortcuts are
 declared.
 
 ```kotlin
-ShortcutBox(
+HotKeyBox(
     modifier = Modifier.fillMaxSize(),
-    shortcuts = {
-        Key.S with ctrl press { save() }
-        Key.Z with ctrl press { undo() }
-        Key.Z with ctrl + shift press { redo() }
+    hotkeys = {
+        Key.S + Ctrl press { save() }
+        Key.Z + Ctrl press { undo() }
+        Key.Z + Ctrl + Shift press { redo() }
         Key.Escape press { closeDialog() }
     }
 ) {
@@ -70,7 +70,7 @@ pattern:
 @Composable
 fun MyTextField() {
     // Step 1 — create at composable scope
-    val shortcuts = rememberShortcutModifier {
+    val hotkeys = rememberHotKeyModifier {
         Key.Enter press { submit() }
         Key.Escape press { cancel() }
         Key.Tab press { focusNext() }
@@ -80,7 +80,7 @@ fun MyTextField() {
     TextField(
         modifier = Modifier
             .fillMaxWidth()
-            .onShortcut(shortcuts)
+            .onHotKey(shortcuts)
             .padding(16.dp)
     )
 }
@@ -89,20 +89,20 @@ fun MyTextField() {
 Multiple independent shortcut groups on one component:
 
 ```kotlin
-val navigationShortcuts = rememberShortcutModifier {
-    Key.K with ctrl andThen Key.S press { saveAll() }
-    Key.K with ctrl andThen Key.B press { toggleSidebar() }
+val navigationHotkeys = rememberHotKeyModifier {
+    Key.K + Ctrl andThen Key.S press { saveAll() }
+    Key.K + Ctrl andThen Key.B press { toggleSidebar() }
 }
 
-val editingShortcuts = rememberShortcutModifier {
-    Key.S with ctrl press { save() }
-    Key.Z with ctrl press { undo() }
+val editingHotkeys = rememberShortcutModifier {
+    Key.S + Ctrl press { save() }
+    Key.Z + Ctrl press { undo() }
 }
 
 Box(
     modifier = Modifier
-        .onShortcut(navigationShortcuts)  // own sequence progress tracker
-        .onShortcut(editingShortcuts)     // own sequence progress tracker
+        .onHotKey(navigationShortcuts)  // own sequence progress tracker
+        .onHotKey(editingShortcuts)     // own sequence progress tracker
 )
 ```
 
@@ -115,17 +115,17 @@ Box(
 Modifiers are top-level objects that combine with `+`:
 
 ```kotlin
-ctrl
-alt
-shift
-meta
-hyper  // expands to ctrl + alt + shift + meta
+Ctrl
+Alt
+Shift
+Meta
+Hyper  // expands to ctrl + alt + shift + meta
 ```
 
 ```kotlin
-Key.S with ctrl press { }
-Key.S with ctrl + shift press { }
-Key.S with hyper press { }         // ctrl + alt + shift + meta + S
+Key.S + Ctrl press { }
+Key.S + Ctrl + Shift press { }
+Key.S + Hyper press { }         // ctrl + alt + shift + meta + S
 ```
 
 ### Chord — simultaneous keys
@@ -136,13 +136,17 @@ A chord fires when all specified keys and modifiers are held at the same time.
 // Single key
 Key.Escape press { }
 
+// Single modifier
+Ctrl press { }
+Alt + Ctrl press { }
+
 // Key + modifier
-Key.S with ctrl press { }
-Key.Z with ctrl + shift press { }
+Key.S + Ctrl press { }
+Key.Z + Ctrl + shift press { }
 
 // Multiple keys + modifier
-Key.A + Key.B with ctrl press { }
-Key.A + Key.B + Key.C with alt press { }
+Key.A + Key.B + Ctrl press { }
+Key.A + Key.B + Key.C + Alt press { }
 ```
 
 ### Sequence — sequential keys
@@ -151,14 +155,14 @@ A sequence fires when keys are pressed one after another, in order. The timeout 
 
 ```kotlin
 // Two steps
-Key.K with ctrl andThen Key.S press { saveAll() }
-Key.K with ctrl andThen Key.B press { toggleSidebar() }
+Key.K + Ctrl andThen Key.S press { saveAll() }
+Key.K + Ctrl andThen Key.B press { toggleSidebar() }
 
 // Three steps
-Key.K with ctrl andThen Key.G andThen Key.G press { goToLine() }
+Key.K + Ctrl andThen Key.G andThen Key.G press { goToLine() }
 
 // Mixed modifiers per step
-Key.K with ctrl andThen Key.P with shift press { openPalette() }
+Key.K + Ctrl andThen Key.P + Shift press { openPalette() }
 ```
 
 Sequence matching rules:
@@ -174,11 +178,11 @@ Sequence matching rules:
 Key.Enter press { }   // fires on KeyDown
 Key.Enter up { }      // fires on KeyUp
 
-Key.S with ctrl press { }
-Key.S with ctrl up { }
+Key.S + Ctrl press { }
+Key.S + Ctrl up { }
 
-Key.K with ctrl andThen Key.S press { }
-Key.K with ctrl andThen Key.S up { }
+Key.K + Ctrl andThen Key.S press { }
+Key.K + Ctrl andThen Key.S up { }
 ```
 
 ### preview — parent intercepts before child
@@ -187,9 +191,9 @@ By default, keyboard events bubble upward — the innermost focused component ha
 `preview { }` are dispatched top-down, so a parent `ShortcutBox` intercepts them before any child.
 
 ```kotlin
-ShortcutBox(
-    shortcuts = {
-        Key.S with ctrl press { save() }     // child handles first (normal)
+HotKeyBox(
+    hotkeys = {
+        Key.S + Ctrl press { save() }     // child handles first (normal)
 
         preview {
             Key.Escape press { closeModal() } // parent intercepts before child
@@ -209,13 +213,13 @@ Shortcut events propagate upward — the innermost `ShortcutBox` handles matchin
 handled), the event stops. Unmatched events bubble to the parent.
 
 ```kotlin
-ShortcutBox(
-    shortcuts = {
-        Key.S with ctrl press { globalSave() }  // handles Ctrl+S everywhere
+HotKeyBox(
+    hotkeys = {
+        Key.S + Ctrl press { globalSave() }  // handles Ctrl+S everywhere
     }
 ) {
-    ShortcutBox(
-        shortcuts = {
+    HotKeyBox(
+        hotkeys = {
             Key.Escape press { closeModal() }   // intercepts Escape here
             // Ctrl+S bubbles to parent
         }
@@ -232,22 +236,23 @@ ShortcutBox(
 ```kotlin
 // ── Chords ──────────────────────────────────────────────────────
 Key.A press { }
-Key.A with ctrl press { }
-Key.A with ctrl + alt press { }
-Key.A with ctrl + alt + shift press { }
-Key.A with hyper press { }              // ctrl + alt + shift + meta + A
+Key.A + Ctrl press { }
+Key.A + Ctrl + Alt press { }
+Key.A + Ctrl + Alt + Shift press { }
+Key.A + Hyper press { }              // ctrl + alt + shift + meta + A
 Key.A + Key.B press { }                 // A and B simultaneously
-Key.A + Key.B with ctrl press { }
+Key.A + Key.B with Ctrl press { }
+Alt + Ctrl { }
 
 // ── Sequences ───────────────────────────────────────────────────
 Key.A andThen Key.B press { }
-Key.A with ctrl andThen Key.B press { }
-Key.A with ctrl andThen Key.B with shift press { }
+Key.A + Ctrl andThen Key.B press { }
+Key.A + Ctrl andThen Key.B + Shift press { }
 Key.A andThen Key.B andThen Key.C press { }
 
 // ── KeyUp ───────────────────────────────────────────────────────
 Key.A up { }
-Key.A with ctrl up { }
+Key.A + Ctrl up { }
 Key.A andThen Key.B up { }
 ```
 
@@ -257,23 +262,23 @@ Key.A andThen Key.B up { }
 
 ### ShortcutMatcher
 
-Each `rememberShortcutModifier` and `ShortcutBox` owns a `ShortcutMatcher` instance that lives for the lifetime of the
+Each `rememberHotKeyModifier` and `HotKeyBox` owns a `HotKeyMatcher` instance that lives for the lifetime of the
 composable (survives recomposition via `remember`).
 
 The matcher tracks:
 
-- `pressedKeys: Set<Key>` — currently held keys, for multi-key chords
+- `pressed: Set<Key>` — currently held keys, for multi-key chords
 - `sequenceProgress: Map<KeyShortcut, Int>` — current step index per sequence shortcut
 - `lastEventTime` — for sequence timeout detection
 
 ### Hyper key expansion
 
-`hyper` is a virtual modifier that expands to `ctrl + alt + shift + meta` at match time:
+`Hyper` is a virtual modifier that expands to `ctrl + alt + shift + meta` at match time:
 
 ```kotlin
 // These are equivalent:
-Key.A with hyper press { }
-Key.A with ctrl + alt + shift + meta press { }
+Key.A + Hyper press { }
+Key.A + Ctrl + Alt + Shift + Meta press { }
 ```
 
 ---

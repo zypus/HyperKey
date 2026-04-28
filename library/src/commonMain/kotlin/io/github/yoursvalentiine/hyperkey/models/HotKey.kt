@@ -27,9 +27,12 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package io.github.yoursvalentiine.hyperkey.ui
+package io.github.yoursvalentiine.hyperkey.models
 
-import androidx.compose.ui.Modifier
+import io.github.yoursvalentiine.hyperkey.scope.Action
 
-fun Modifier.onHotKey(modifier: Modifier): Modifier =
-    this.then(modifier)
+data class HotKey(
+    val trigger: HotKeyTrigger,
+    val preview: Boolean = false,
+    val action: Action
+)
