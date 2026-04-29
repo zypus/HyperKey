@@ -39,7 +39,7 @@ The library has three layers:
 
 ---
 
-## HotKeyBoxHotKeyBox
+## HotKeyBox
 
 Wraps any content and intercepts keyboard events within it. Takes a `ShortcutScope` lambda where all shortcuts are
 declared.
