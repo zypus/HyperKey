@@ -1,6 +1,6 @@
 # HyperKey
 
-A Kotlin DSL for declarative keyboard shortcut handling in Compose Multiplatform (Android, Desktop).
+A Kotlin DSL for declarative keyboard hotkey handling in Compose Multiplatform (Android, Desktop).
 
 ```kotlin
 HotKeyBox(
@@ -61,9 +61,9 @@ HotKeyBox(
 
 ---
 
-## Modifier.onShortcut
+## Modifier.onHotKey
 
-For attaching shortcuts to a single component. Since `onShortcut` requires `remember` internally, use the two-step
+For attaching shortcuts to a single component. Since `onHotKey` requires `remember` internally, use the two-step
 pattern:
 
 ```kotlin
