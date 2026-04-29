@@ -1,5 +1,9 @@
 # HyperKey
 
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.yours-valentiine/hyperkey)](https://central.sonatype.com/artifact/io.github.yours-valentiine/hyperkey)
+
+- [Documentation](docs/DOCUMENTATION.md)
+
 A Kotlin DSL for declarative keyboard hotkey handling in Compose Multiplatform (Android, Desktop).
 
 ```kotlin
