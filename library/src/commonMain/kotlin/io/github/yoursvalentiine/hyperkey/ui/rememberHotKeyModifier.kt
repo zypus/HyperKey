@@ -29,7 +29,33 @@
  */
 package io.github.yoursvalentiine.hyperkey.ui
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import io.github.yoursvalentiine.hyperkey.scope.HotKeyScope
+import io.github.yoursvalentiine.hyperkey.utils.HotKeyMatcher
 
-fun Modifier.onHotKey(modifier: Modifier): Modifier =
-    this.then(modifier)
+@Composable
+fun rememberHotKeyModifier(
+    timeout: Long = 2000L,
+    hotkeys: HotKeyScope.() -> Unit
+): Modifier {
+    val currentHotKey by rememberUpdatedState(hotkeys)
+    val matcher = remember { HotKeyMatcher(timeout = timeout) }
+
+    return remember(matcher) {
+        Modifier
+            .onPreviewKeyEvent { event ->
+                val scope = HotKeyScope().apply(currentHotKey)
+                matcher.match(event = event, hotkeys = scope.hotkeys.filter { it.preview })
+            }
+            .onKeyEvent { event ->
+                val scope = HotKeyScope().apply(currentHotKey)
+                matcher.match(event = event, hotkeys = scope.hotkeys.filterNot { it.preview })
+            }
+    }
+}

@@ -29,7 +29,36 @@
  */
 package io.github.yoursvalentiine.hyperkey.ui
 
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import io.github.yoursvalentiine.hyperkey.scope.HotKeyScope
 
-fun Modifier.onHotKey(modifier: Modifier): Modifier =
-    this.then(modifier)
+@Composable
+fun HotKeyBox(
+    modifier: Modifier = Modifier,
+    focusRequester: FocusRequester = remember { FocusRequester() },
+    hotkeys: HotKeyScope.() -> Unit,
+    content: @Composable BoxScope.() -> Unit
+) {
+    Box(
+        modifier = modifier.then(
+            Modifier
+                .focusRequester(focusRequester)
+                .focusable()
+                .onHotKey(modifier = rememberHotKeyModifier(hotkeys = hotkeys))
+        )
+    ) {
+        content()
+    }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+}

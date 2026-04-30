@@ -27,9 +27,20 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package io.github.yoursvalentiine.hyperkey.ui
+package io.github.yoursvalentiine.hyperkey.models
 
-import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
 
-fun Modifier.onHotKey(modifier: Modifier): Modifier =
-    this.then(modifier)
+sealed interface HotKeyTrigger {
+
+    data class Chord(
+        val keys: Set<Key>,
+        val modifiers: Set<KeyModifier>,
+        val eventType: KeyEventType
+    ) : HotKeyTrigger
+
+    data class Sequence(
+        val chords: List<Chord>
+    ) : HotKeyTrigger
+}

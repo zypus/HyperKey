@@ -27,9 +27,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package io.github.yoursvalentiine.hyperkey.ui
+package io.github.yoursvalentiine.hyperkey.annotation
 
-import androidx.compose.ui.Modifier
-
-fun Modifier.onHotKey(modifier: Modifier): Modifier =
-    this.then(modifier)
+@DslMarker
+annotation class HotKeyDsl
