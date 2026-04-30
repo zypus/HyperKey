@@ -1,6 +1,6 @@
 # Docs
 
-| Note: This library is under active development, so the API may change.
+> Note: This library is under active development, so the API may change.
 
 ## Installation
 
