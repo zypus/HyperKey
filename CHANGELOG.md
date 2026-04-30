@@ -27,8 +27,8 @@ ShortcutBox(
 **new:**
 
 ```kotlin
-ShortcutBox(
-    shortcuts = {
+HotKeyBox(
+   hotkeys = {
         Key.S + Ctrl press { save() }
         Key.K + Ctrl andThen Key.P press { openCommandPalette() }
         Key.Space + Hyper press { spotlight() }
@@ -41,8 +41,8 @@ ShortcutBox(
 - Now the `press` and `up` functions pass the key event as a parameter.
 
 ```kotlin
-ShortcutBox(
-    shortcuts = {
+HotKeyBox(
+   hotkeys = {
         Key.B + Alt press { event -> println(event.toString()) }
     }
 ) {
@@ -53,8 +53,8 @@ ShortcutBox(
 - The `Alt`, `Ctrl`, `Meta`, and `Hyper` modifiers are now full keys and can be combined without additional keys.
 
 ```kotlin
-ShortcutBox(
-    shortcuts = {
+HotKeyBox(
+   hotkeys = {
         Alt press { println("Single Alt") }
         Ctrl + Alt press { println("Pressed Ctrl+Alt") }
     }
@@ -92,6 +92,6 @@ HotKeyBox(
 ```
 
 2. All modifiers and Compose functions use the `hotkey` prefix instead of `shortcut`.
-    - ShortcutBox --> HotKeyBox
-    - rememberShortcutModifier --> rememberHotKeyModifier
-    - onShortcut --> onHotKey
+    - `ShortcutBox` --> `HotKeyBox`
+    - `rememberShortcutModifier` --> `rememberHotKeyModifier`
+    - `onShortcut` --> `onHotKey`
