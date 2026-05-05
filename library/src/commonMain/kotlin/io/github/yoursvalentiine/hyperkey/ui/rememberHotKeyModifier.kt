@@ -45,17 +45,18 @@ fun rememberHotKeyModifier(
     hotkeys: HotKeyScope.() -> Unit
 ): Modifier {
     val currentHotKey by rememberUpdatedState(hotkeys)
+    val previewMatcher = remember { HotKeyMatcher(timeout = timeout) }
     val matcher = remember { HotKeyMatcher(timeout = timeout) }
 
     return remember(matcher) {
+        val scope = HotKeyScope().apply(currentHotKey)
+        val (previewHotKeys, normalHotKeys) = scope.hotkeys.partition { it.preview }
         Modifier
             .onPreviewKeyEvent { event ->
-                val scope = HotKeyScope().apply(currentHotKey)
-                matcher.match(event = event, hotkeys = scope.hotkeys.filter { it.preview })
+                previewMatcher.match(event = event, hotkeys = previewHotKeys)
             }
             .onKeyEvent { event ->
-                val scope = HotKeyScope().apply(currentHotKey)
-                matcher.match(event = event, hotkeys = scope.hotkeys.filterNot { it.preview })
+                matcher.match(event = event, hotkeys = normalHotKeys)
             }
     }
 }
